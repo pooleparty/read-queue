@@ -1,0 +1,14 @@
+.app-container {
+  width: 500px;
+  padding: 8px;
+
+  h1 {
+    text-align: center;
+  }
+
+  .btn-container {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+  }
+}

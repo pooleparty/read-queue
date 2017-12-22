@@ -6,7 +6,7 @@
   "version": "1.0",
 
   "browser_action": {
-    // "default_icon": "icon.png",
+    "default_icon": "public/icons/list.svg",
     "default_popup": "popup.html"
   },
 
@@ -15,5 +15,12 @@
     "persistent": true
   },
 
-  "permissions": ["activeTab", "storage", "contextMenus"]
+  "permissions": [
+    "activeTab",
+    "storage",
+    "contextMenus",
+    "notifications",
+    "http://*/",
+    "https://*/"
+  ]
 }

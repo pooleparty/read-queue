@@ -1,4 +1,13 @@
 .queue-item {
+  .close-button > svg {
+    width: 12px;
+    height: 12px;
+  }
+}
+.queue-item__link-container {
   display: flex;
   justify-content: space-between;
+}
+.queue-item__details {
+  color: rgb(100, 100, 100);
 }

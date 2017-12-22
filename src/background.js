@@ -1,5 +1,7 @@
 import 'babel-polyfill';
-import { addAndSaveQueue } from './utils/queue';
+import find from 'lodash/find';
+import { addAndSaveQueue, addQueueChangeListener } from './utils/queue';
+import { showAddedNotification, showRemovedNotification } from './utils/notifications';
 
 // A generic onclick callback function.
 function genericOnClick(info, tab) {
@@ -26,4 +28,23 @@ chrome.contextMenus.create({
   title,
   contexts: ['page', 'link'],
   onclick: genericOnClick,
+});
+
+addQueueChangeListener((oldValue, newValue) => {
+  const added = [];
+  newValue.forEach((item) => {
+    if (!find(oldValue, { id: item.id })) {
+      added.push(item);
+    }
+  });
+
+  const removed = [];
+  oldValue.forEach((item) => {
+    if (!find(newValue, { id: item.id })) {
+      removed.push(item);
+    }
+  });
+
+  showAddedNotification(added);
+  showRemovedNotification(removed);
 });

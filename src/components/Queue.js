@@ -7,25 +7,39 @@ import '../styles/Queue.scss';
 
 const DATE_FORMAT = 'ddd MM/DD/YY h:mm:ss a';
 
+function getHostname(url) {
+  const u = new URL(url);
+  return u.hostname;
+}
+
 function Queue({ queue, onRemoveTabFromQueue }) {
   function makeQueueItem(item) {
     return (
-      <div key={item.id}>
-        <div className="queue-item">
+      <div key={item.id} className="queue-item">
+        <div className="queue-item__link-container">
           <div>
             <a href={item.url} target="_blank">
               {item.title}
             </a>
           </div>
           <div>
-            <button className="btn btn-link btn-lg" onClick={() => onRemoveTabFromQueue(item.id)}>
-              &times;
+            <button
+              type="button"
+              className="close"
+              aria-label="Close"
+              onClick={() => onRemoveTabFromQueue(item.id)}
+            >
+              <span aria-hidden="true">&times;</span>
             </button>
           </div>
         </div>
-        <small>
-          <strong>Added:</strong> {moment(item.dateAdded).format(DATE_FORMAT)}
-        </small>
+        <div className="queue-item__details">
+          <small>{getHostname(item.url)}</small>
+          <br />
+          <small>
+            Added - {moment(item.dateAdded).format(DATE_FORMAT)}
+          </small>
+        </div>
         <hr />
       </div>
     );

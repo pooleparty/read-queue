@@ -1,0 +1,25 @@
+.app-container {
+  padding: 2em;
+  font-size: larger;
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+
+    &__text {
+      font-size: 2em;
+      font-weight: bold;
+      margin: 0.67em 0;
+    }
+
+    &--link {
+      margin: 0 0.5em;
+    }
+  }
+
+  .btn-container {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+  }
+}

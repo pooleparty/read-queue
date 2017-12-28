@@ -2,3 +2,4 @@ node_modules/
 .eslintcache
 public/bundles
 .DS_Store
+.vscode

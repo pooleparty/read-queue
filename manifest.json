@@ -5,6 +5,8 @@
   "description": "This extension allows the user to save pages to read in a queue.",
   "version": "1.0",
 
+  "options_page": "options.html",
+
   "browser_action": {
     "default_icon": "public/icons/list.svg",
     "default_popup": "popup.html"

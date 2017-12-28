@@ -1,13 +1,41 @@
+@import 'variables';
+
+.queue__header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.67em;
+}
+
+.queue-container {
+  height: 65vh;
+  overflow-y: auto;
+  border: 2px solid $border-color;
+  border-radius: $border-radius;
+
+  @media (min-width: 600px) {
+    height: 80vh;
+  }
+}
+
 .queue-item {
+  padding: 0.67em;
+  border-bottom: 2px solid $border-color;
+
+  &:last-child {
+    border: 0;
+  }
+
   .close-button > svg {
     width: 12px;
     height: 12px;
   }
 }
+
 .queue-item__link-container {
   display: flex;
   justify-content: space-between;
 }
+
 .queue-item__details {
-  color: rgb(100, 100, 100);
+  color: $detail-color;
 }

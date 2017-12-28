@@ -1,6 +1,9 @@
 .app-container {
-  width: 500px;
   padding: 8px;
+
+  &--popup {
+    width: 500px;
+  }
 
   h1 {
     text-align: center;

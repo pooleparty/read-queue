@@ -1,4 +1,5 @@
 import { v4 as uuid } from 'node-uuid';
+import find from 'lodash/find';
 
 const STORAGE_KEY_QUEUE = 'STORAGE_KEY_QUEUE';
 
@@ -42,6 +43,19 @@ export function clearChromeQueue() {
   return saveChromeQueue([]);
 }
 
+export async function findImportDuplicates(imported = []) {
+  const queue = await getChromeQueue();
+
+  const entries = imported.map((item) => {
+    const isDuplicate = !!find(
+      queue,
+      queueItem => item.id === queueItem.id || item.url === queueItem.url,
+    );
+    return { isDuplicate, ...item };
+  });
+  return entries;
+}
+
 function getTitle(input) {
   const title = input.match(/<title[^>]*>([^<]+)<\/title>/);
   if (title) {
@@ -76,37 +90,43 @@ function followRedirects({ url, title }) {
   });
 }
 
-export async function addAndSaveQueue(tab) {
-  // get queue
-  const queue = await getChromeQueue();
+async function createQueueEntry(item) {
+  const { url, title } = await followRedirects(item);
 
-  // follow url redirects
-  const { url, title } = await followRedirects(tab);
-
-  // add tab to queue
-  queue.push({
+  return {
     id: uuid(),
     dateAdded: new Date().toISOString(),
     url,
     title,
-  });
+  };
+}
 
-  // save queue
-  await saveChromeQueue(queue);
+export async function importEntries(entries) {
+  const queue = await getChromeQueue();
 
-  // return queue
-  return queue;
+  const imported = await Promise.all(entries.map(createQueueEntry));
+
+  const newQueue = queue.concat(imported);
+
+  return saveChromeQueue(newQueue);
+}
+
+export async function addAndSaveQueue(tab) {
+  const queue = await getChromeQueue();
+
+  const item = await createQueueEntry(tab);
+
+  const newQueue = queue.concat(item);
+
+  return saveChromeQueue(newQueue);
 }
 
 export async function removeTabAndSaveQueue(tabId) {
-  // get queue
   const queue = await getChromeQueue();
-  // filter tab from queue
+
   const newQueue = queue.filter(item => item.id !== tabId);
-  // save new queue
-  await saveChromeQueue(newQueue);
-  // return new queue
-  return newQueue;
+
+  return saveChromeQueue(newQueue);
 }
 
 export function getActiveTab() {

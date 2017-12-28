@@ -8,8 +8,16 @@ function ClearQueueButton(props) {
     return null;
   }
 
+  function onClearQueue() {
+    // eslint-disable-next-line no-alert
+    if (props.confirmClear && !window.confirm('Are you sure you want to clear your queue?')) {
+      return;
+    }
+    props.onClearQueue();
+  }
+
   return (
-    <button className="btn btn-default btn-xs" onClick={props.onClearQueue}>
+    <button onClick={onClearQueue}>
       Clear queue
     </button>
   );
@@ -22,13 +30,15 @@ ClearQueueButton.propTypes = {
     url: propTypes.string,
   })),
   onClearQueue: propTypes.func.isRequired,
+  confirmClear: propTypes.bool,
 };
 
 ClearQueueButton.defaultProps = {
   queue: [],
+  confirmClear: false,
 };
 
-const mapStateToProps = queue => ({ queue });
+const mapStateToProps = ({ queue }) => ({ queue });
 
 const mapDispatchToProp = dispatch => ({
   onClearQueue: () => {

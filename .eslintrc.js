@@ -25,5 +25,7 @@ module.exports = {
     // we specify some components as PureComponents over
     // stateless fuctional components for performance reasons
     'react/prefer-stateless-function': ['error', { ignorePureComponents: true }],
+
+    'jsx-a11y/anchor-is-valid': ['off'],
   },
 };

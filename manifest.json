@@ -1,12 +1,14 @@
 {
   "manifest_version": 2,
 
-  "name": "Queue",
+  "name": "Read Queue",
   "description": "This extension allows the user to save pages to read in a queue.",
-  "version": "1.0",
+  "version": "0.0.1",
+
+  "icons": { "16": "public/icons/list-16.png", "128": "public/icons/list-128.png" },
 
   "browser_action": {
-    "default_icon": "public/icons/list.svg",
+    "default_icon": "public/icons/list-16.png",
     "default_popup": "popup.html"
   },
 

@@ -8,7 +8,8 @@
     "prebuild": "npm run clean",
     "build": "BABEL_ENV=client webpack -p --progress",
     "clean": "rimraf public/bundles && rimraf npm-debug.log && rimraf .eslintcache",
-    "lint": "eslint . '**/.*.js' --ext=[.js,.jsx] --cache"
+    "lint": "eslint . '**/.*.js' --ext=[.js,.jsx] --cache",
+    "test": "jest --coverage"
   },
   "keywords": [],
   "author": "",
@@ -28,6 +29,7 @@
     "eslint-plugin-jsx-a11y": "^6.0.2",
     "eslint-plugin-react": "^7.5.1",
     "extract-text-webpack-plugin": "^3.0.2",
+    "jest": "^22.0.6",
     "node-sass": "^4.7.2",
     "rimraf": "^2.6.2",
     "sass-loader": "^6.0.6",

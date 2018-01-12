@@ -33,7 +33,7 @@ export const CLEAR_QUEUE_REJECTED = `${CLEAR_QUEUE}_${REJECTED}`;
 
 export function clearQueue() {
   return {
-    type: GET_QUEUE,
+    type: CLEAR_QUEUE,
     payload: clearChromeQueue(),
   };
 }

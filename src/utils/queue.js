@@ -21,24 +21,24 @@ export function getChromeQueue() {
 export function saveChromeQueue(queue) {
   return new Promise((resolve, reject) => {
     if (!Array.isArray(queue)) {
-      return reject('Queue must be an Array');
+      reject(new Error('Queue must be an Array'));
+    } else {
+      chrome.storage.sync.set(
+        {
+          [STORAGE_KEY_QUEUE]: queue,
+        },
+        () => {
+          if (chrome.runtime.lastError) {
+            reject(chrome.runtime.lastError);
+          } else {
+            chrome.browserAction.setBadgeText({
+              text: (queue || []).length.toString(),
+            });
+            resolve(queue);
+          }
+        },
+      );
     }
-
-    chrome.storage.sync.set(
-      {
-        [STORAGE_KEY_QUEUE]: queue,
-      },
-      () => {
-        if (chrome.runtime.lastError) {
-          reject(chrome.runtime.lastError);
-        } else {
-          chrome.browserAction.setBadgeText({
-            text: (queue || []).length.toString(),
-          });
-          resolve(queue);
-        }
-      },
-    );
   });
 }
 

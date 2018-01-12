@@ -8,7 +8,7 @@ export function getChromeQueue() {
       if (chrome.runtime.lastError) {
         reject(chrome.runtime.lastError);
       } else {
-        const queue = result[STORAGE_KEY_QUEUE];
+        const queue = result[STORAGE_KEY_QUEUE] || [];
         chrome.browserAction.setBadgeText({
           text: queue.length.toString(),
         });
@@ -20,6 +20,10 @@ export function getChromeQueue() {
 
 export function saveChromeQueue(queue) {
   return new Promise((resolve, reject) => {
+    if (!Array.isArray(queue)) {
+      return reject('Queue must be an Array');
+    }
+
     chrome.storage.sync.set(
       {
         [STORAGE_KEY_QUEUE]: queue,
@@ -29,7 +33,7 @@ export function saveChromeQueue(queue) {
           reject(chrome.runtime.lastError);
         } else {
           chrome.browserAction.setBadgeText({
-            text: queue.length.toString(),
+            text: (queue || []).length.toString(),
           });
           resolve(queue);
         }

@@ -7,6 +7,7 @@
     "dev:build": "BABEL_ENV=client webpack --progress --watch",
     "prebuild": "npm run clean",
     "build": "BABEL_ENV=client webpack -p --progress",
+    "postbuild": "./scripts/postbuild.sh",
     "clean": "rimraf public/bundles && rimraf npm-debug.log && rimraf .eslintcache",
     "lint": "eslint . '**/.*.js' --ext=[.js,.jsx] --cache",
     "test": "jest --coverage"

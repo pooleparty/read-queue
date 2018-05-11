@@ -15,6 +15,7 @@ function addToQueue(info, tab) {
 }
 
 function confirmClearQueue() {
+  // eslint-disable-next-line
   const clear = confirm('Are you sure you want to clear your queue?');
 
   if (clear) {

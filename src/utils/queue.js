@@ -1,7 +1,8 @@
 import { v4 as uuid } from 'node-uuid';
 import { showErrorNotification, showBasicNotification } from './notifications';
+import followRedirects from './utils';
 
-const STORAGE_KEY_QUEUE = 'STORAGE_KEY_QUEUE';
+export const STORAGE_KEY_QUEUE = 'STORAGE_KEY_QUEUE';
 
 export function getChromeQueue() {
   return new Promise((resolve, reject) => {
@@ -19,7 +20,7 @@ export function getChromeQueue() {
   });
 }
 
-export function saveChromeQueue(queue) {
+function saveChromeQueue(queue) {
   return new Promise((resolve, reject) => {
     if (!Array.isArray(queue)) {
       reject(new Error('Queue must be an Array'));
@@ -46,44 +47,10 @@ export function saveChromeQueue(queue) {
 export async function clearChromeQueue() {
   try {
     await saveChromeQueue([]);
-    showBasicNotification('Clear Queue', 'Queue Successfully Cleared')
+    showBasicNotification('Clear Queue', 'Queue Successfully Cleared');
   } catch (e) {
     showErrorNotification(e.message);
   }
-}
-
-function getTitle(input) {
-  const title = input.match(/<title[^>]*>([^<]+)<\/title>/);
-  if (title) {
-    return title[1];
-  }
-  return undefined;
-}
-
-function followRedirects({ url, title }) {
-  return new Promise((resolve, reject) => {
-    if (!url) {
-      resolve();
-    } else {
-      const xhr = new XMLHttpRequest();
-      xhr.onreadystatechange = () => {
-        if (xhr.readyState === 4) {
-          const resolvedUrl = xhr.responseURL || url;
-          const resolvedTitle = getTitle(xhr.responseText) || title;
-          resolve({
-            url: resolvedUrl,
-            title: resolvedTitle,
-          });
-        }
-      };
-      xhr.open('GET', url, true);
-      try {
-        xhr.send();
-      } catch (e) {
-        reject(e);
-      }
-    }
-  });
 }
 
 export async function addAndSaveQueue(tab) {

@@ -1,6 +1,8 @@
 import { v4 as uuid } from 'node-uuid';
+import { showErrorNotification, showBasicNotification } from './notifications';
+import followRedirects from './utils';
 
-const STORAGE_KEY_QUEUE = 'STORAGE_KEY_QUEUE';
+export const STORAGE_KEY_QUEUE = 'STORAGE_KEY_QUEUE';
 
 export function getChromeQueue() {
   return new Promise((resolve, reject) => {
@@ -18,99 +20,81 @@ export function getChromeQueue() {
   });
 }
 
-export function saveChromeQueue(queue) {
+function saveChromeQueue(queue) {
   return new Promise((resolve, reject) => {
     if (!Array.isArray(queue)) {
-      return reject('Queue must be an Array');
-    }
-
-    chrome.storage.sync.set(
-      {
-        [STORAGE_KEY_QUEUE]: queue,
-      },
-      () => {
-        if (chrome.runtime.lastError) {
-          reject(chrome.runtime.lastError);
-        } else {
-          chrome.browserAction.setBadgeText({
-            text: (queue || []).length.toString(),
-          });
-          resolve(queue);
-        }
-      },
-    );
-  });
-}
-
-export function clearChromeQueue() {
-  return saveChromeQueue([]);
-}
-
-function getTitle(input) {
-  const title = input.match(/<title[^>]*>([^<]+)<\/title>/);
-  if (title) {
-    return title[1];
-  }
-  return undefined;
-}
-
-function followRedirects({ url, title }) {
-  return new Promise((resolve, reject) => {
-    if (!url) {
-      resolve();
+      reject(new Error('Queue must be an Array'));
     } else {
-      const xhr = new XMLHttpRequest();
-      xhr.onreadystatechange = () => {
-        if (xhr.readyState === 4) {
-          const resolvedUrl = xhr.responseURL || url;
-          const resolvedTitle = getTitle(xhr.responseText) || title;
-          resolve({
-            url: resolvedUrl,
-            title: resolvedTitle,
-          });
-        }
-      };
-      xhr.open('GET', url, true);
-      try {
-        xhr.send();
-      } catch (e) {
-        reject(e);
-      }
+      chrome.storage.sync.set(
+        {
+          [STORAGE_KEY_QUEUE]: queue,
+        },
+        () => {
+          if (chrome.runtime.lastError) {
+            reject(chrome.runtime.lastError);
+          } else {
+            chrome.browserAction.setBadgeText({
+              text: (queue || []).length.toString(),
+            });
+            resolve(queue);
+          }
+        },
+      );
     }
   });
+}
+
+export async function clearChromeQueue() {
+  try {
+    await saveChromeQueue([]);
+    showBasicNotification('Clear Queue', 'Queue Successfully Cleared');
+  } catch (e) {
+    showErrorNotification(e.message);
+  }
 }
 
 export async function addAndSaveQueue(tab) {
-  // get queue
-  const queue = await getChromeQueue();
+  try {
+    // get queue
+    const queue = await getChromeQueue();
 
-  // follow url redirects
-  const { url, title } = await followRedirects(tab);
+    // follow url redirects
+    const { url, title } = await followRedirects(tab);
 
-  // add tab to queue
-  queue.push({
-    id: uuid(),
-    dateAdded: new Date().toISOString(),
-    url,
-    title,
-  });
+    // add tab to queue
+    queue.push({
+      id: uuid(),
+      dateAdded: new Date().toISOString(),
+      url,
+      title,
+    });
 
-  // save queue
-  await saveChromeQueue(queue);
+    // save queue
+    await saveChromeQueue(queue);
 
-  // return queue
-  return queue;
+    // return queue
+    return queue;
+  } catch (e) {
+    showErrorNotification(e.message);
+    return [];
+  }
 }
 
 export async function removeTabAndSaveQueue(tabId) {
-  // get queue
-  const queue = await getChromeQueue();
-  // filter tab from queue
-  const newQueue = queue.filter(item => item.id !== tabId);
-  // save new queue
-  await saveChromeQueue(newQueue);
-  // return new queue
-  return newQueue;
+  try {
+    // get queue
+    const queue = await getChromeQueue();
+    // filter tab from queue
+    const newQueue = queue.filter(item => item.id !== tabId);
+    // save new queue
+    await saveChromeQueue(newQueue);
+
+    // return new queue
+    return newQueue;
+  } catch (e) {
+    showErrorNotification(e.message);
+    return [];
+  }
 }
 
 export function getActiveTab() {

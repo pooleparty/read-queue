@@ -4,3 +4,5 @@ public/bundles
 .DS_Store
 .vscode
 key.pem
+dist
+coverage

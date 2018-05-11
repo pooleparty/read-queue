@@ -2,12 +2,13 @@ module.exports = {
   extends: 'airbnb',
   env: {
     browser: true,
+    jest: true,
   },
   globals: {
     chrome: true,
   },
   rules: {
-    'no-plusplus': ['error', { allowForLoopAfterthoughts: true }],
+    'no-plusplus': 'off',
 
     // git will switch LF based on OS, so rule should switch also
     'linebreak-style': ['error', require('os').EOL === '\r\n' ? 'windows' : 'unix'],

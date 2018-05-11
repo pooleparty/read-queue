@@ -1,4 +1,5 @@
 import { v4 as uuid } from 'node-uuid';
+import { showErrorNotification, showBasicNotification } from './notifications';
 
 const STORAGE_KEY_QUEUE = 'STORAGE_KEY_QUEUE';
 
@@ -42,8 +43,13 @@ export function saveChromeQueue(queue) {
   });
 }
 
-export function clearChromeQueue() {
-  return saveChromeQueue([]);
+export async function clearChromeQueue() {
+  try {
+    await saveChromeQueue([]);
+    showBasicNotification('Clear Queue', 'Queue Successfully Cleared')
+  } catch (e) {
+    showErrorNotification(e.message);
+  }
 }
 
 function getTitle(input) {
@@ -81,36 +87,47 @@ function followRedirects({ url, title }) {
 }
 
 export async function addAndSaveQueue(tab) {
-  // get queue
-  const queue = await getChromeQueue();
+  try {
+    // get queue
+    const queue = await getChromeQueue();
 
-  // follow url redirects
-  const { url, title } = await followRedirects(tab);
+    // follow url redirects
+    const { url, title } = await followRedirects(tab);
 
-  // add tab to queue
-  queue.push({
-    id: uuid(),
-    dateAdded: new Date().toISOString(),
-    url,
-    title,
-  });
+    // add tab to queue
+    queue.push({
+      id: uuid(),
+      dateAdded: new Date().toISOString(),
+      url,
+      title,
+    });
 
-  // save queue
-  await saveChromeQueue(queue);
+    // save queue
+    await saveChromeQueue(queue);
 
-  // return queue
-  return queue;
+    // return queue
+    return queue;
+  } catch (e) {
+    showErrorNotification(e.message);
+    return [];
+  }
 }
 
 export async function removeTabAndSaveQueue(tabId) {
-  // get queue
-  const queue = await getChromeQueue();
-  // filter tab from queue
-  const newQueue = queue.filter(item => item.id !== tabId);
-  // save new queue
-  await saveChromeQueue(newQueue);
-  // return new queue
-  return newQueue;
+  try {
+    // get queue
+    const queue = await getChromeQueue();
+    // filter tab from queue
+    const newQueue = queue.filter(item => item.id !== tabId);
+    // save new queue
+    await saveChromeQueue(newQueue);
+
+    // return new queue
+    return newQueue;
+  } catch (e) {
+    showErrorNotification(e.message);
+    return [];
+  }
 }
 
 export function getActiveTab() {

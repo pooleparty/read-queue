@@ -38,3 +38,27 @@ export function showRemovedNotification(removed = []) {
     showNotification(options);
   }
 }
+
+export function showBasicNotification(title, message) {
+  const options = {
+    type: 'basic',
+    title,
+    message,
+    iconUrl: NOTIFICATION_ICON,
+  };
+
+  showNotification(options);
+}
+
+export function showErrorNotification(error) {
+  if (error) {
+    const options = {
+      type: 'basic',
+      title: 'Error',
+      message: error,
+      iconUrl: NOTIFICATION_ICON,
+    };
+
+    showNotification(options);
+  }
+}
